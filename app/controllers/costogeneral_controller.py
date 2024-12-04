@@ -9,6 +9,8 @@ from ..models.models import (
     Materiales
     )
 
+from datetime import datetime
+
 
 sesion = impresion_conn()
 
@@ -49,7 +51,7 @@ def costo_general_controller_register(costogeneral):
         
         
     mCostogeneral = Costos_Generales(
-        fecha=_fecha,
+        fecha=datetime.strptime(_fecha, "%Y-%m-%d").date(),
         id_material = _id_material,
         desgaste=_desgaste,
         electricidad=_electricidad,
@@ -61,7 +63,7 @@ def costo_general_controller_register(costogeneral):
     
     sesion.add(mCostogeneral)
     sesion.commit()
-    return f"registrando costo general con fecha {costogeneral["fecha"]}"
+    return f"registrando costo general"
     
     
 def costo_general_controller_delete_by_id(id):
@@ -86,7 +88,14 @@ def costo_general_controller_get_by_id(id):
 
 
 def costo_general_controller_get_by_fecha(fecha):
-    costogeneral = sesion.query(Costos_Generales).filter_by(fecha=fecha).all()
+    
+    try:
+        _fecha = fecha["fecha"]
+    except:
+        _fecha = None
+        
+
+    costogeneral = sesion.query(Costos_Generales).filter_by(fecha=_fecha).all()
     return costogeneral
 
 
