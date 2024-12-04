@@ -10,6 +10,8 @@ from ..models.models import (
     Costos_Generales
     )
 
+from datetime import datetime
+
 from ..utils.folio_id_generador import FolioIdGenerador
 
 sesion = impresion_conn()
@@ -45,7 +47,7 @@ def folio_controller_register(folio):
         folio=_folio,
         id_cliente = _id_cliente,
         id_costo_general = _id_costo_general,
-        fecha = _fecha,
+        fecha = datetime.strptime(_fecha, "%Y-%m-%d").date(),
         concepto = _concepto
     )
     
@@ -79,4 +81,17 @@ def folio_controller_delete_by_id(id):
     
     finally:
         return "Borrado con exito"
+    
+
+
+def folio_controller_get_by_fecha(fecha):
+    
+    try:
+        _fecha = fecha["fecha"]
+    except:
+        _fecha = None
+        
+
+    folio = sesion.query(Folios).filter_by(fecha=_fecha).all()
+    return folio
     
