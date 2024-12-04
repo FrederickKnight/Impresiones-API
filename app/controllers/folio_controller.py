@@ -10,6 +10,8 @@ from ..models.models import (
     Costos_Generales
     )
 
+from ..utils.folio_id_generador import FolioIdGenerador
+
 sesion = impresion_conn()
 
 
@@ -19,14 +21,13 @@ def folio_controller_get_all():
 
 
 def folio_controller_register(folio):
-    _folio = None
+    
+    _folio = FolioIdGenerador().generate_ticket_id()
     _id_cliente = None
     _id_costo_general = None
     _fecha = None
     _concepto = None
-  
-    if "folio" in folio:
-        _folio = folio["folio"]
+    
     if "id_cliente" in folio:
         if not (sesion.query(Clientes).filter_by(id_cliente=folio["id_cliente"]).first()):
             return "No se encuentra ese cliente registrado aun"
@@ -50,7 +51,7 @@ def folio_controller_register(folio):
     
     sesion.add(mFolio)
     sesion.commit()
-    return f"registrando folio {folio["folio"]}"
+    return _folio
 
 def folio_controller_update(folio):
     _id = folio["id"]
