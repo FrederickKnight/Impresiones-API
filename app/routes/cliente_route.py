@@ -20,14 +20,14 @@ def cliente_route_index():
     _return = __cliente_for__(cliente)
     return _return
 
-@cliente_bp.route("/register/",methods=["POST"])
+@cliente_bp.route("/register",methods=["POST"])
 def cliente_route_register():
     #register cliente
     cliente = request.get_json()
     return cliente_controller_register(cliente)
 
 
-@cliente_bp.route("/update/",methods=["PUT"])
+@cliente_bp.route("/update",methods=["PUT"])
 def cliente_route_update():
     #update cliente
     cliente = request.get_json()
@@ -38,14 +38,14 @@ def cliente_route_update():
 def cliente_route_delete_by_id(id):
     return cliente_controller_delete_by_id(id)
     
-@cliente_bp.route("/delete/",methods=["DELETE"])
+@cliente_bp.route("/delete",methods=["DELETE"])
 def cliente_route_delete():
     cliente = request.get_json()
     return cliente_controller_delete(cliente)
 
 # Funciones para obtener a los clientes por filtros
 
-@cliente_bp.route("/filter/",methods=["POST"])
+@cliente_bp.route("/filter",methods=["POST"])
 def cliente_route_filter():
     #introducir args por medio de json en request
     #Retornar el filtrado de la tabla cliente, ya sea por nombre, email o numero o id
