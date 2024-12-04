@@ -6,8 +6,7 @@ from typing import (
 from sqlalchemy import (
     String,
     ForeignKey,
-    Double,
-    Date,
+    Float,
     create_engine
 )
 
@@ -22,7 +21,7 @@ from sqlalchemy.orm import (
 Base = declarative_base()
 
 
-class Cliente(Base):
+class Clientes(Base):
     __tablename__ = "cliente"
     
     id_cliente : Mapped[int] = mapped_column(primary_key=True)
@@ -40,6 +39,7 @@ class Materiales(Base):
     nombre : Mapped[str] = mapped_column(String(20))
     marca : Mapped[str] = mapped_column(String(20))
     medicion : Mapped[str] = mapped_column(String(20))
+    color : Mapped[str] = mapped_column(String(30))
     
     def __repr__(self) -> str:
         return f"<Material(id={self.id_material}, nombre={self.nombre},marca={self.marca},medicion={self.medicion})>"
@@ -70,14 +70,14 @@ class Costos_Generales(Base):
     __tablename__ = "costo_general"
     
     id_costo_general : Mapped[int] = mapped_column(primary_key=True)
-    fecha : Mapped[Date] = mapped_column(Date)
+    fecha : Mapped[str] = mapped_column(String(12))
     id_material : Mapped[int] = mapped_column(ForeignKey("modelo.id_modelo"))
-    desgaste : Mapped[Double] = mapped_column(Double)
-    electricidad : Mapped[Double] = mapped_column(Double)
-    riesgo_fallo_menor : Mapped[Double] = mapped_column(Double)
-    riesgo_fallo_mediano : Mapped[Double] = mapped_column(Double)
-    riesgo_fallo_mayor : Mapped[Double] = mapped_column(Double)
-    margen : Mapped[Double] = mapped_column(Double)
+    desgaste : Mapped[Float] = mapped_column(Float)
+    electricidad : Mapped[Float] = mapped_column(Float)
+    riesgo_fallo_menor : Mapped[Float] = mapped_column(Float)
+    riesgo_fallo_mediano : Mapped[Float] = mapped_column(Float)
+    riesgo_fallo_mayor : Mapped[Float] = mapped_column(Float)
+    margen : Mapped[Float] = mapped_column(Float)
     
     def __repr__(self) -> str:
         r = '<Costos_generales('
@@ -93,7 +93,7 @@ class Folios(Base):
     folio : Mapped[str] = mapped_column(String(200))
     id_cliente : Mapped[int] = mapped_column(ForeignKey("cliente.id_cliente"))
     id_costo_general : Mapped[int] = mapped_column(ForeignKey("costo_general.id_costo_general"))
-    fecha : Mapped[Date] = mapped_column(Date)
+    fecha : Mapped[str] = mapped_column(String(12))
     concepto : Mapped[String] = mapped_column(String(500))
     
     def __repr__(self) -> str:
@@ -107,16 +107,15 @@ class Ventas(Base):
     id_folio : Mapped[int] = mapped_column(ForeignKey("folio.id_folio"))
     id_modelo : Mapped[int] = mapped_column(ForeignKey("modelo.id_modelo"))
     id_material : Mapped[int] = mapped_column(ForeignKey("material.id_material"))
-    cantidad_material : Mapped[Double] = mapped_column(Double)
-    tiempo_impresion : Mapped[Double] = mapped_column(Double)
-    costo_total : Mapped[Double] = mapped_column(Double)
-    descuento : Mapped[Double] = mapped_column(Double)
-    costo_aplicado : Mapped[Double] = mapped_column(Double)
+    cantidad_material : Mapped[Float] = mapped_column(Float)
+    tiempo_impresion : Mapped[Float] = mapped_column(Float)
+    costo_total : Mapped[Float] = mapped_column(Float)
+    descuento : Mapped[Float] = mapped_column(Float)
+    costo_aplicado : Mapped[Float] = mapped_column(Float)
     
     def __repr__(self) -> str:
         r = "<Ventas("
-        r += f"id={self.id_venta},folio={self.id_folio},modelo={self.id_modelo},material={self.id_material},"
-        r += f"cantidad_material={self.cantidad_material},tiempo_impresion={self.cantidad_material},costo_total={self.costo_total},"
-        r += f"descuento={self.descuento},costo_aplicado={self.costo_aplicado}"
+        r += f"id={self.id_venta},folio={self.id_folio},modelo={self.id_modelo},material={self.id_material}"
         r += ")>"
-        
+        # r = f"<Ventas(id={self.id_venta},folio={self.id_folio},modelo={self.id_modelo},material={self.id_material},cantidad_material={self.cantidad_material},tiempo_impresion={self.cantidad_material},costo_total={self.costo_total},descuento={self.descuento},costo_aplicado={self.costo_aplicado})>"
+        return r
