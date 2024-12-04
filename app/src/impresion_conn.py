@@ -10,9 +10,6 @@ from sqlalchemy.orm import (
     sessionmaker
 )
 
-from app.models.models import (
-    Cliente
-)
 from dotenv import dotenv_values
 
 
