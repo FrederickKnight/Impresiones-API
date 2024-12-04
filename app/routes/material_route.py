@@ -7,8 +7,7 @@ from ..controllers.material_controller import (
     material_controller_delete,
     material_controller_delete_by_id,
     material_controller_get_by_id,
-    material_controller_get_by_marca,
-    material_controller_get_by_nombre
+    material_controller_get_by_filter
 )
 
 
@@ -57,20 +56,16 @@ def modelo_route_filter_id(id):
     return _return
 
 
-@material_bp.route("/filter/nombre/<nombre>",methods=["POST"])
-def modelo_route_filter_nombre(nombre):
-    #Retornar el filtrado de la tabla material por nombre
-    material = material_controller_get_by_nombre(nombre)
+@material_bp.route("/filter",methods=["POST"])
+def material_route_filter():
+    #introducir args por medio de json en request
+    #Retornar el filtrado de la tabla material, con cualquer arg
+    args = request.get_json()
+    
+    material = material_controller_get_by_filter(args)
     
     _return = __material_for__(material)
-    return _return
 
-@material_bp.route("/filter/marca/<marca>",methods=["POST"])
-def modelo_route_filter_marca(marca):
-    #Retornar el filtrado de la tabla material por marca
-    material = material_controller_get_by_marca(marca)
-    
-    _return = __material_for__(material)
     return _return
 
 

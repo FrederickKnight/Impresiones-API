@@ -110,7 +110,7 @@ def modelo_controller_get_by_id(id):
 def modelo_controller_get_by_filter(args):
     data = args
     
-    esperados = ["nombre","id_tematica","descripcion","direccion_archivo"]
+    esperados = ["nombre","id_tematica"]
     _where = 'where '
     
     x= 0

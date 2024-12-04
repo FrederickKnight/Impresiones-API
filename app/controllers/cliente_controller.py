@@ -89,25 +89,6 @@ def cliente_controller_delete(cliente):
     finally:
         return "Borrado con exito"
 
-
-def cliente_controller_get_by_filter(args):
-    data = args
-    
-    esperados = ["nombre","email","numero"]
-    _where = 'where '
-    
-    x= 0
-    for i in range(len(esperados)):
-        if esperados[i] in data:
-            if x > 0:
-                _where += " and "
-            x += 1
-            _where += f'{esperados[i]} = "{data[esperados[i]]}"'
-            
-    cliente = sesion.query(Clientes).from_statement(text(f"SELECT * FROM cliente {_where}")).all()
-    return cliente
-
-
 def cliente_controller_get_by_name(nombre):
     cliente = sesion.query(Clientes).filter_by(nombre=nombre).all()
     return cliente

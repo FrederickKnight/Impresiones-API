@@ -100,10 +100,20 @@ def material_controller_get_by_id(id):
     material = sesion.query(Materiales).filter_by(id_material=id).all()
     return material
 
-def material_controller_get_by_nombre(nombre):
-    material = sesion.query(Materiales).filter_by(nombre=nombre).all()
-    return material
 
-def material_controller_get_by_marca(marca):
-    material = sesion.query(Materiales).filter_by(marca=marca).all()
+def material_controller_get_by_filter(args):
+    data = args
+    
+    esperados = ["nombre","marca","color","medicion"]
+    _where = 'where '
+    
+    x= 0
+    for i in range(len(esperados)):
+        if esperados[i] in data:
+            if x > 0:
+                _where += " and "
+            x += 1
+            _where += f'{esperados[i]} = "{data[esperados[i]]}"'
+            
+    material = sesion.query(Materiales).from_statement(text(f"SELECT * FROM material {_where}")).all()
     return material
