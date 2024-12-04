@@ -5,8 +5,11 @@ from typing import (
 from sqlalchemy import (
     String,
     ForeignKey,
-    Float
+    Float,
+    DateTime,
+    Date
 )
+from datetime import datetime,date
 
 from sqlalchemy.orm import (
     declarative_base,
@@ -66,7 +69,7 @@ class Costos_Generales(Base):
     __tablename__ = "costo_general"
     
     id_costo_general : Mapped[int] = mapped_column(primary_key=True)
-    fecha : Mapped[str] = mapped_column(String(12))
+    fecha : Mapped[date] = mapped_column(Date,default=datetime.now())
     id_material : Mapped[int] = mapped_column(ForeignKey("modelo.id_modelo"))
     desgaste : Mapped[Float] = mapped_column(Float)
     electricidad : Mapped[Float] = mapped_column(Float)
@@ -89,7 +92,7 @@ class Folios(Base):
     folio : Mapped[str] = mapped_column(String(200))
     id_cliente : Mapped[int] = mapped_column(ForeignKey("cliente.id_cliente"))
     id_costo_general : Mapped[int] = mapped_column(ForeignKey("costo_general.id_costo_general"))
-    fecha : Mapped[str] = mapped_column(String(12))
+    fecha : Mapped[date] = mapped_column(Date,default=datetime.now())
     concepto : Mapped[String] = mapped_column(String(500))
     
     def __repr__(self) -> str:

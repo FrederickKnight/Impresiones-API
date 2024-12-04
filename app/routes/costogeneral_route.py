@@ -6,6 +6,7 @@ from ..controllers.costogeneral_controller import (
     costo_general_controller_get_by_id,
     costo_general_controller_get_by_material,
     costo_general_controller_delete_by_id,
+    costo_general_controller_get_by_fecha,
 )
 
 
@@ -47,6 +48,14 @@ def costo_general_route_filter_material_id(id):
     _return = __costo_general_for__(costogeneral)
     return _return
 
+@costogeneral_bp.route("/filter/fecha",methods=["POST"])
+def costo_general_route_filter_fecha():
+    fecha = request.get_json()
+    #Retornar el filtrado de la tabla costo_general por fecha
+    costogeneral = costo_general_controller_get_by_fecha(fecha)
+    
+    _return = __costo_general_for__(costogeneral)
+    return _return
 
 
 # especial
