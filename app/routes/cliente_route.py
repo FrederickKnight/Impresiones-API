@@ -2,7 +2,6 @@ from flask import Blueprint,request
 
 from ..controllers.cliente_controller import (
     cliente_controller_get_all,
-    cliente_controller_get_by_filter,
     cliente_controller_get_by_name,
     cliente_controller_get_by_id,
     cliente_controller_register,
@@ -44,18 +43,6 @@ def cliente_route_delete():
     return cliente_controller_delete(cliente)
 
 # Funciones para obtener a los clientes por filtros
-
-@cliente_bp.route("/filter",methods=["POST"])
-def cliente_route_filter():
-    #introducir args por medio de json en request
-    #Retornar el filtrado de la tabla cliente, ya sea por nombre, email o numero o id
-    args = request.get_json()
-    
-    cliente = cliente_controller_get_by_filter(args)
-    
-    _return = __cliente_for__(cliente)
-
-    return _return
 
 @cliente_bp.route("/filter/nombre/<nombre>",methods=["POST"])
 def cliente_route_filter_name(nombre):
