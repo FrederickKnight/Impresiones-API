@@ -1,21 +1,17 @@
 from typing import (
-    List,
     Optional
 )
 
 from sqlalchemy import (
     String,
     ForeignKey,
-    Float,
-    create_engine
+    Float
 )
 
 from sqlalchemy.orm import (
     declarative_base,
     Mapped,
-    mapped_column,
-    relationship,
-    sessionmaker
+    mapped_column
 )
 
 Base = declarative_base()

@@ -1,8 +1,4 @@
-from flask import (
-    Flask,
-    request,
-    Blueprint
-    )
+from flask import Flask
 
 #blueprints routes
 from app.routes import (
