@@ -1,12 +1,14 @@
 from sqlalchemy import text
 
+from flask import Response
+
 from ..src.impresion_conn import (
     impresion_conn
     )
 
 from ..models.models import (
     Modelos,
-    Tematicas
+    Subtematica
     )
 
 sesion = impresion_conn()
@@ -17,17 +19,19 @@ def modelo_controller_get_all():
 
 def modelo_controller_register(modelo):
     _nombre = None
-    _id_tematica = None
+    _id_subtematica = None
     _descripcion = None
     _direccion_archivo = None
   
     if "nombre" in modelo:
         _nombre = modelo["nombre"]
-    if "id_tematica" in modelo:
-        _id_tematica = int(modelo["id_tematica"])
-        if not (sesion.query(Tematicas).filter_by(id_tematica=_id_tematica).first()):
-            return "No se encuentra esa tematica registrada aun"
+    if "id_subtematica" in modelo:
+        if not (sesion.query(Subtematica).filter_by(id_subtematica=modelo["id_subtematica"]).first()):
+            return Response({"result":"No se encuentra esa subtematica"}
+                            ,status=400,mimetype="application/json")
         
+        _id_subtematica = int(modelo["id_subtematica"])
+
     if "descripcion" in modelo:
         _descripcion = modelo["descripcion"]
     if "direccion_archivo" in modelo:
@@ -35,14 +39,15 @@ def modelo_controller_register(modelo):
   
     mModelo = Modelos(
         nombre=_nombre,
-        id_tematica=_id_tematica,
+        id_subtematica=_id_subtematica,
         descripcion=_descripcion,
         direccion_archivo=_direccion_archivo
     )
     
     sesion.add(mModelo)
     sesion.commit()
-    return f"registrando modelo {modelo["nombre"]}"
+    return sesion.query(Modelos).filter_by(id_modelo = mModelo.id_modelo).all()
+
 
 def modelo_controller_update(modelo):
     _id = modelo["id"]
@@ -51,10 +56,11 @@ def modelo_controller_update(modelo):
     
     if "nombre" in _data:
         _modelo.nombre = _data["nombre"]
-    if "id_tematica" in _data:
-        if not (sesion.query(Tematicas).filter_by(id_tematica=_data["id_tematica"]).first()):
-            return "No se encuentra esa tematica registrada aun"
-        _modelo.id_tematica = _data["id_tematica"]
+    if "id_subtematica" in _data:
+        print(_data["id_subtematica"])
+        if not (sesion.query(Subtematica).filter_by(id_subtematica=_data["id_subtematica"]).first()):
+            return Response(status=404,mimetype="application/json")
+        _modelo.id_subtematica = _data["id_subtematica"]
     if "descripcion" in _data:
         _modelo.descripcion = _data["descripcion"]
     if "direccion_archivo" in _data:
@@ -64,6 +70,8 @@ def modelo_controller_update(modelo):
     sesion.merge(_modelo)
     sesion.flush()
     sesion.commit()
+    return sesion.query(Modelos).filter_by(id_modelo = _id).all()
+    
 
 
 def modelo_controller_delete_by_id(id):
@@ -78,7 +86,8 @@ def modelo_controller_delete_by_id(id):
         return e
     
     finally:
-        return "Borrado con exito"
+        return Response(status=200,mimetype="application/json")
+        
     
 def modelo_controller_delete(modelo):
     _data = modelo
@@ -98,19 +107,24 @@ def modelo_controller_delete(modelo):
     except Exception as e:
         return e
     finally:
-        return "Borrado con exito"
+        return Response(status=200,mimetype="application/json")
+        
 
 
 
 # filter
 def modelo_controller_get_by_id(id):
-    modelo = sesion.query(Modelos).filter_by(id_modelo=id).all()
-    return modelo
+    query = sesion.query(Modelos).filter_by(id_modelo=id).all()
+    if len(query) > 0:
+        return query
+    elif len(query) <= 0:
+        return Response(status=404,mimetype="application/json")
+
 
 def modelo_controller_get_by_filter(args):
     data = args
     
-    esperados = ["nombre","id_tematica"]
+    esperados = ["nombre","id_subtematica"]
     _where = 'where '
     
     x= 0
@@ -121,5 +135,9 @@ def modelo_controller_get_by_filter(args):
             x += 1
             _where += f'{esperados[i]} = "{data[esperados[i]]}"'
             
-    modelo = sesion.query(Modelos).from_statement(text(f"SELECT * FROM modelo {_where}")).all()
-    return modelo
+    query = sesion.query(Modelos).from_statement(text(f"SELECT * FROM modelo {_where}")).all()
+    if len(query) > 0:
+        print(query)
+        return query
+    elif len(query) <= 0:
+        return Response(status=404,mimetype="application/json")

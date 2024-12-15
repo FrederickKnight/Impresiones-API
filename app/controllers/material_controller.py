@@ -1,5 +1,7 @@
 from sqlalchemy import text
 
+from flask import Response
+
 from ..src.impresion_conn import (
     impresion_conn
     )
@@ -12,21 +14,19 @@ from ..models.models import (
 sesion = impresion_conn()
 
 def material_controller_get_all():
-    material = sesion.query(Materiales).all()
-    return material
+    return sesion.query(Materiales).all()
 
 
 def material_controller_register(material):
     _nombre = None
     _marca = None
     _medicion = None
+    _color = None
   
     if "nombre" in material:
         _nombre = material["nombre"]
-        
     if "marca" in material:
         _marca = material["marca"]
-        
     if "medicion" in material:
         _medicion = material["medicion"]
     if "color" in material:
@@ -41,7 +41,7 @@ def material_controller_register(material):
     
     sesion.add(mMaterial)
     sesion.commit()
-    return f"registrando modelo {material["nombre"]}"
+    return sesion.query(Materiales).filter_by(id_material = mMaterial.id_material).all()
 
 def material_controller_update(material):
     _id = material["id"]
@@ -60,12 +60,13 @@ def material_controller_update(material):
     sesion.merge(_material)
     sesion.flush()
     sesion.commit()
+    
+    return sesion.query(Materiales).filter_by(id_material = _id).all()
 
 def material_controller_delete_by_id(id):
     
     try:
         _m=sesion.query(Materiales).filter_by(id_material = id).first()
-        print(_m)
         sesion.delete(_m)
         sesion.commit()
         
@@ -73,7 +74,7 @@ def material_controller_delete_by_id(id):
         return e
     
     finally:
-        return "Borrado con exito"
+        return Response(status=200,mimetype="application/json")
     
 def material_controller_delete(material):
     _data = material
@@ -93,12 +94,15 @@ def material_controller_delete(material):
     except Exception as e:
         return e
     finally:
-        return "Borrado con exito"
+        return Response(status=200,mimetype="application/json")
     
 
 def material_controller_get_by_id(id):
-    material = sesion.query(Materiales).filter_by(id_material=id).all()
-    return material
+    query = sesion.query(Materiales).filter_by(id_material=id).all()
+    if len(query) > 0:
+        return query
+    elif len(query) <= 0:
+        return Response(status=404,mimetype="application/json")
 
 
 def material_controller_get_by_filter(args):
@@ -114,6 +118,9 @@ def material_controller_get_by_filter(args):
                 _where += " and "
             x += 1
             _where += f'{esperados[i]} = "{data[esperados[i]]}"'
-            
-    material = sesion.query(Materiales).from_statement(text(f"SELECT * FROM material {_where}")).all()
-    return material
+    
+    query = sesion.query(Materiales).from_statement(text(f"SELECT * FROM material {_where}")).all()
+    if len(query) > 0:
+        return query
+    elif len(query) <= 0:
+        return Response(status=404,mimetype="application/json")

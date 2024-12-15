@@ -1,4 +1,4 @@
-from flask import Blueprint,request
+from flask import Blueprint,request,Response
 
 from ..controllers.cliente_controller import (
     cliente_controller_get_all,
@@ -16,31 +16,33 @@ cliente_bp = Blueprint("cliente",__name__)
 def cliente_route_index():
     #Retornar toda la lista de clientes
     cliente = cliente_controller_get_all()
-    _return = __cliente_for__(cliente)
-    return _return
+    return __cliente_for__(cliente)
 
 @cliente_bp.route("/register",methods=["POST"])
 def cliente_route_register():
     #register cliente
-    cliente = request.get_json()
-    return cliente_controller_register(cliente)
-
+    cliente_request = request.get_json()
+    cliente = cliente_controller_register(cliente_request)
+    return __cliente_for__(cliente)
 
 @cliente_bp.route("/update",methods=["PUT"])
 def cliente_route_update():
     #update cliente
-    cliente = request.get_json()
-    cliente_controller_update(cliente)
-    return "update"
+    cliente_request = request.get_json()
+    cliente = cliente_controller_update(cliente_request)
+    return __cliente_for__(cliente)
+    
 
 @cliente_bp.route("/delete/id/<int:id>",methods=["DELETE"])
 def cliente_route_delete_by_id(id):
-    return cliente_controller_delete_by_id(id)
+    cliente =  cliente_controller_delete_by_id(id)
+    return __cliente_for__(cliente)
     
 @cliente_bp.route("/delete",methods=["DELETE"])
 def cliente_route_delete():
-    cliente = request.get_json()
-    return cliente_controller_delete(cliente)
+    cliente_request = request.get_json()
+    cliente =  cliente_controller_delete(cliente_request)
+    return __cliente_for__(cliente)
 
 # Funciones para obtener a los clientes por filtros
 
@@ -49,17 +51,14 @@ def cliente_route_filter_name(nombre):
     #Retornar el filtrado de la tabla cliente por nombre
     cliente = cliente_controller_get_by_name(nombre)
     
-    _return = __cliente_for__(cliente)
-
-    return _return
+    return __cliente_for__(cliente)
 
 @cliente_bp.route("/filter/id/<id>",methods=["POST"])
 def cliente_route_filter_id(id):
     #Retornar el filtrado de la tabla cliente por id
     cliente = cliente_controller_get_by_id(id)
     
-    _return = __cliente_for__(cliente)
-    return _return
+    return __cliente_for__(cliente)
 
 
 
@@ -68,13 +67,17 @@ def cliente_route_filter_id(id):
 def __cliente_for__(clientes):
     _return = []
     
-    for cl in clientes:
+    try:
         
-        _return.append({
-            "id":cl.id_cliente,
-            "nombre":cl.nombre,
-            "email":cl.email,
-            "numero":cl.numero
-        })
-        
-    return _return
+        for cl in clientes:
+            
+            _return.append({
+                "id":cl.id_cliente,
+                "nombre":cl.nombre,
+                "email":cl.email,
+                "numero":cl.numero
+            })
+            
+        return _return
+    except:
+        return clientes

@@ -1,5 +1,7 @@
 from sqlalchemy import text
 
+from flask import Response
+
 from ..src.impresion_conn import (
     impresion_conn
     )
@@ -28,7 +30,8 @@ def tematica_controller_register(tematica):
     
     sesion.add(mTematica)
     sesion.commit()
-    return f"registrando modelo {tematica["nombre"]}"
+    return sesion.query(Tematicas).filter_by(id_tematica = mTematica.id_tematica).all()
+    
 
 def tematica_controller_update(tematica):
     _id = tematica["id"]
@@ -42,12 +45,13 @@ def tematica_controller_update(tematica):
     sesion.merge(_tematica)
     sesion.flush()
     sesion.commit()
+    return sesion.query(Tematicas).filter_by(id_tematica = _id).all()
+    
 
 def tematica_controller_delete_by_id(id):
     
     try:
         _t=sesion.query(Tematicas).filter_by(id_tematica = id).first()
-        print(_t)
         sesion.delete(_t)
         sesion.commit()
         
@@ -55,7 +59,7 @@ def tematica_controller_delete_by_id(id):
         return e
     
     finally:
-        return "Borrado con exito"
+        return Response(status=200,mimetype="application/json")
     
 def tematica_controller_delete(tematica):
     _data = tematica
@@ -75,12 +79,19 @@ def tematica_controller_delete(tematica):
     except Exception as e:
         return e
     finally:
-        return "Borrado con exito"
+        return Response(status=200,mimetype="application/json")
+
     
 def tematica_controller_get_by_id(id):
-    tematica = sesion.query(Tematicas).filter_by(id_tematica=id).all()
-    return tematica
+    query = sesion.query(Tematicas).filter_by(id_tematica=id).all()
+    if len(query) > 0:
+        return query
+    elif len(query) <= 0:
+        return Response(status=404,mimetype="application/json")
 
 def tematica_controller_get_by_nombre(nombre):
-    tematica = sesion.query(Tematicas).filter_by(nombre=nombre).all()
-    return tematica
+    query = sesion.query(Tematicas).filter_by(nombre=nombre).all()
+    if len(query) > 0:
+        return query
+    elif len(query) <= 0:
+        return Response(status=404,mimetype="application/json")

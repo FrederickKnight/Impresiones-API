@@ -1,5 +1,8 @@
 from sqlalchemy import text
 
+from flask import Response
+from datetime import datetime
+
 from ..src.impresion_conn import (
     impresion_conn
     )
@@ -16,9 +19,8 @@ sesion = impresion_conn()
 
 
 def costo_general_controller_get_all():
-    costogeneral = sesion.query(Costos_Generales).all()
-    return costogeneral
-
+    return sesion.query(Costos_Generales).all()
+    
 
 def costo_general_controller_register(costogeneral):
     _fecha = None
@@ -32,9 +34,12 @@ def costo_general_controller_register(costogeneral):
   
     if "fecha" in costogeneral:
         _fecha = costogeneral["fecha"]
+        
     if "id_material" in costogeneral:
         if not (sesion.query(Materiales).filter_by(id_material=costogeneral["id_material"]).first()):
-            return "No se encuentra ese material registrado aun"
+            return Response({"result":"No se encuentra ese material"}
+                            ,status=400,mimetype="application/json")
+            
         _id_material = costogeneral["id_material"]
     if "desgaste" in costogeneral:
         _desgaste = costogeneral["desgaste"] 
@@ -63,14 +68,13 @@ def costo_general_controller_register(costogeneral):
     
     sesion.add(mCostogeneral)
     sesion.commit()
-    return f"registrando costo general"
+    return sesion.query(Costos_Generales).filter_by(id_costo_general=mCostogeneral.id_costo_general).all()
     
     
 def costo_general_controller_delete_by_id(id):
     
     try:
         _cg=sesion.query(Costos_Generales).filter_by(id_costo_general = id).first()
-        print(_cg)
         sesion.delete(_cg)
         sesion.commit()
         
@@ -78,27 +82,38 @@ def costo_general_controller_delete_by_id(id):
         return e
     
     finally:
-        return "Borrado con exito"
+        return Response(status=200,mimetype="application/json")
 
 
 #filter
 def costo_general_controller_get_by_id(id):
-    costogeneral = sesion.query(Costos_Generales).filter_by(id_costo_general=id).all()
-    return costogeneral
+    query = sesion.query(Costos_Generales).filter_by(id_costo_general=id).all()
+    if len(query) > 0:
+        return query
+    elif len(query) <= 0:
+        return Response(status=404,mimetype="application/json")
 
 
 def costo_general_controller_get_by_fecha(fecha):
     
     try:
-        _fecha = fecha["fecha"]
+        data_fecha = datetime.strptime(fecha["fecha"],"%Y-%m-%d")
+        _fecha = data_fecha.strftime("%Y-%m-%d")
     except:
         _fecha = None
-        
-
-    costogeneral = sesion.query(Costos_Generales).filter_by(fecha=_fecha).all()
-    return costogeneral
+    
+    query = sesion.query(Costos_Generales).where(text(f'fecha = "{_fecha}"')).all()
+    if len(query) > 0:
+        return query
+    elif len(query) <= 0:
+        return Response(status=404,mimetype="application/json")
+    
 
 
 def costo_general_controller_get_by_material(id_material):
-    costogeneral = sesion.query(Costos_Generales).filter_by(id_material=id_material).all()
-    return costogeneral
+    print(id_material)
+    query = sesion.query(Costos_Generales).filter_by(id_material=id_material).all()
+    if len(query) > 0:
+        return query
+    elif len(query) <= 0:
+        return Response(status=404,mimetype="application/json")

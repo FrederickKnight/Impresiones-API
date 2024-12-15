@@ -1,5 +1,6 @@
 from sqlalchemy import text
 
+from flask import Response
 
 from ..src.impresion_conn import (
     impresion_conn
@@ -13,13 +14,14 @@ sesion = impresion_conn()
 
 
 def cliente_controller_get_all():
-    cliente = sesion.query(Clientes).all()
-    return cliente
+    return sesion.query(Clientes).all()
+     
 
 def cliente_controller_register(cliente):
     _nombre = None
     _email = None
     _numero = None
+
   
     if "nombre" in cliente:
         _nombre = cliente["nombre"]
@@ -35,11 +37,14 @@ def cliente_controller_register(cliente):
     )
     sesion.add(mCliente)
     sesion.commit()
-    return f"registrando cliente {cliente["nombre"]}"
+    
+    return sesion.query(Clientes).filter_by(id_cliente = mCliente.id_cliente).all()
+    
 
 
 def cliente_controller_update(cliente):
     _id = cliente["id"]
+    
     _data = cliente
     _cliente = sesion.query(Clientes).filter_by(id_cliente=_id).first()
     
@@ -55,19 +60,19 @@ def cliente_controller_update(cliente):
     sesion.flush()
     sesion.commit()
     
-def cliente_controller_delete_by_id(id):
+    return sesion.query(Clientes).filter_by(id_cliente = _id).all()
+    
+def cliente_controller_delete_by_id(_id):
     
     try:
-        _c=sesion.query(Clientes).filter_by(id_cliente = id).first()
-        print(_c)
+        _c=sesion.query(Clientes).filter_by(id_cliente = _id).first()
         sesion.delete(_c)
         sesion.commit()
         
     except Exception as e:
         return e
-    
     finally:
-        return "Borrado con exito"
+        return Response(status=200,mimetype="application/json")
     
 def cliente_controller_delete(cliente):
     _data = cliente
@@ -87,13 +92,20 @@ def cliente_controller_delete(cliente):
     except Exception as e:
         return e
     finally:
-        return "Borrado con exito"
+        return Response(status=200,mimetype="application/json")
 
 def cliente_controller_get_by_name(nombre):
-    cliente = sesion.query(Clientes).filter_by(nombre=nombre).all()
-    return cliente
+    query= sesion.query(Clientes).filter_by(nombre=nombre).all()
+    if len(query) > 0:
+        return query
+    elif len(query) <= 0:
+        return Response(status=404,mimetype="application/json")
+    
 
 
 def cliente_controller_get_by_id(id):
-    cliente = sesion.query(Clientes).filter_by(id_cliente=id).all()
-    return cliente
+    query= sesion.query(Clientes).filter_by(id_cliente=id).all()
+    if len(query) > 0:
+        return query
+    elif len(query) <= 0:
+        return Response(status=404,mimetype="application/json")

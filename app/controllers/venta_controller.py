@@ -1,5 +1,8 @@
 from sqlalchemy import text
 
+from flask import Response
+
+
 from ..src.impresion_conn import (
     impresion_conn
     )
@@ -12,8 +15,7 @@ sesion = impresion_conn()
 
 
 def venta_controller_get_all():
-    venta = sesion.query(Ventas).all()
-    return venta
+    return sesion.query(Ventas).all()
 
 
 def venta_controller_register(venta):
@@ -57,26 +59,27 @@ def venta_controller_register(venta):
     
     sesion.add(mVenta)
     sesion.commit()
-    return f"registrando venta con {venta["costo_aplicado"]}"
+    return sesion.query(Ventas).filter_by(id_venta = mVenta.id_venta).all()
+    
 
 def venta_controller_delete_by_id(id):
-    ########### Arreglar erorr  #########
     try:
-        _v=sesion.query(Ventas).filter_by(id_venta = id)
-        print(_v)
+        _v=sesion.query(Ventas).filter_by(id_venta = id).first()
         sesion.delete(_v)
         sesion.commit()
         
     except Exception as e:
         return e
     finally:
-        return "Borrado con exito"
+        return Response(status=200,mimetype="application/json")
      
 # filter
 def venta_controller_get_by_id(id):
-    tematica = sesion.query(Ventas).filter_by(id_venta=id).all()
-    return tematica
-
+    query = sesion.query(Ventas).filter_by(id_venta=id).all()
+    if len(query) > 0:
+        return query
+    elif len(query) <= 0:
+        return Response(status=404,mimetype="application/json")
 
 def venta_controller_get_by_filter(args):
     data = args
@@ -92,5 +95,8 @@ def venta_controller_get_by_filter(args):
             x += 1
             _where += f'{esperados[i]} = "{data[esperados[i]]}"'
             
-    venta = sesion.query(Ventas).from_statement(text(f"SELECT * FROM venta {_where}")).all()
-    return venta
+    query = sesion.query(Ventas).from_statement(text(f"SELECT * FROM venta {_where}")).all()
+    if len(query) > 0:
+        return query
+    elif len(query) <= 0:
+        return Response(status=404,mimetype="application/json")
