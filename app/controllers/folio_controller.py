@@ -4,13 +4,16 @@ from ..src.impresion_conn import (
     impresion_conn
     )
 
+
+from flask import Response
+from datetime import datetime
+
+
 from ..models.models import (
     Folios,
     Clientes,
     Costos_Generales
     )
-
-from datetime import datetime
 
 from ..utils.folio_id_generador import FolioIdGenerador
 
@@ -18,8 +21,7 @@ sesion = impresion_conn()
 
 
 def folio_controller_get_all():
-    folios = sesion.query(Folios).all()
-    return folios
+    return sesion.query(Folios).all()
 
 
 def folio_controller_register(folio):
@@ -32,12 +34,16 @@ def folio_controller_register(folio):
     
     if "id_cliente" in folio:
         if not (sesion.query(Clientes).filter_by(id_cliente=folio["id_cliente"]).first()):
-            return "No se encuentra ese cliente registrado aun"
+            return Response({"result":"No se encuentra ese cliente"}
+                            ,status=400,mimetype="application/json")
         _id_cliente = folio["id_cliente"]
+        
     if "id_costo_general" in folio:
         if not (sesion.query(Costos_Generales).filter_by(id_costo_general=folio["id_costo_general"]).first()):
-            return "No se encuentra ese costo general registrado aun"
+            return Response({"result":"No se encuentra ese costo general"}
+                            ,status=400,mimetype="application/json")
         _id_costo_general = folio["id_costo_general"]
+        
     if "fecha" in folio:
         _fecha = folio["fecha"]
     if "concepto" in folio:
@@ -53,26 +59,13 @@ def folio_controller_register(folio):
     
     sesion.add(mFolio)
     sesion.commit()
-    return _folio
-
-def folio_controller_update(folio):
-    _id = folio["id"]
-    _data = folio
-    _folio = sesion.query(Folios).filter_by(id_folio=_id).first()
+    return sesion.query(Folios).filter_by(id_folio=mFolio.id_folio).all()
     
-    if "folio" in _data:
-        _folio.folio = _data["folio"]
-    
-    
-    sesion.merge(_folio)
-    sesion.flush()
-    sesion.commit()
-
 def folio_controller_delete_by_id(id):
     
     try:
         _f=sesion.query(Folios).filter_by(id_folio = id).first()
-        print(_f)
+        print(id)
         sesion.delete(_f)
         sesion.commit()
         
@@ -80,18 +73,41 @@ def folio_controller_delete_by_id(id):
         return e
     
     finally:
-        return "Borrado con exito"
+        return Response(status=200,mimetype="application/json")
+
+    
+def folio_controller_get_by_folio(folio):
+    try:
+        _folio = folio["folio"]
+    except:
+        _folio = None
+    
+    query = sesion.query(Folios).filter_by(folio=_folio).all()
+    if len(query) > 0:
+        return query
+    elif len(query) <= 0:
+        return Response(status=404,mimetype="application/json")
     
 
 
 def folio_controller_get_by_fecha(fecha):
     
     try:
-        _fecha = fecha["fecha"]
+        data_fecha = datetime.strptime(fecha["fecha"],"%Y-%m-%d")
+        _fecha = data_fecha.strftime("%Y-%m-%d")
     except:
         _fecha = None
         
 
-    folio = sesion.query(Folios).filter_by(fecha=_fecha).all()
-    return folio
+    query = sesion.query(Folios).where(text(f'fecha = "{_fecha}"')).all()
+    if len(query) > 0:
+        return query
+    elif len(query) <= 0:
+        return Response(status=404,mimetype="application/json")
     
+def folio_controller_get_by_id(id):
+    query = sesion.query(Folios).filter_by(id_folio=id).all()
+    if len(query) > 0:
+        return query
+    elif len(query) <= 0:
+        return Response(status=404,mimetype="application/json")
