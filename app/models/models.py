@@ -6,7 +6,6 @@ from sqlalchemy import (
     String,
     ForeignKey,
     Float,
-    DateTime,
     Date,
     Boolean
 )
@@ -75,7 +74,7 @@ class Tematicas(Base):
     def __repr__(self) -> str:
         return f"<Tematica(id={self.id_tematica},nombre={self.nombre})>"
     
-class Subtematica(Base):
+class Subtematicas(Base):
     __tablename__ = "subtematica"
     
     id_subtematica: Mapped[int] = mapped_column(primary_key=True)
@@ -131,13 +130,13 @@ class Folios(Base):
     def __repr__(self) -> str:
         return f"<Folio(id={self.id_folio},folio={self.folio},cliente={self.id_cliente},costo_general={self.id_costo_general},fecha={self.fecha},concepto={self.concepto})>"
     
-class ErrorFolio(Base):
+class ErrorFolios(Base):
     __tablename__ = "error_folio"
     
     id_error: Mapped[int] = mapped_column(primary_key=True)
     id_folio: Mapped[int] = mapped_column(ForeignKey("folio.id_folio"))
     id_modelo: Mapped[int] = mapped_column(ForeignKey("modelo.id_modelo"))
-    merma: Mapped[Boolean] = mapped_column(Boolean)
+    merma: Mapped[Float] = mapped_column(Float)
     costo_reajustado: Mapped[Float] = mapped_column(Float)
     descripcion : Mapped[str] = mapped_column(String(500))
     
@@ -161,6 +160,6 @@ class Ventas(Base):
         r = "<Ventas("
         r += f"id={self.id_venta},folio={self.id_folio},modelo={self.id_modelo},material={self.id_material},"
         r += f"cantidad_material={self.cantidad_material},tiempo_impresion={self.tiempo_impresion},"
-        f += f"costo_total={self.costo_total},descuento={self.descuento},costo_aplicado={self.costo_aplicado}"
+        r += f"costo_total={self.costo_total},descuento={self.descuento},costo_aplicado={self.costo_aplicado}"
         r += ")>"
         return r

@@ -8,7 +8,7 @@ from ..src.impresion_conn import (
 
 from ..models.models import (
     Modelos,
-    Subtematica
+    Subtematicas
     )
 
 sesion = impresion_conn()
@@ -26,7 +26,7 @@ def modelo_controller_register(modelo):
     if "nombre" in modelo:
         _nombre = modelo["nombre"]
     if "id_subtematica" in modelo:
-        if not (sesion.query(Subtematica).filter_by(id_subtematica=modelo["id_subtematica"]).first()):
+        if not (sesion.query(Subtematicas).filter_by(id_subtematica=modelo["id_subtematica"]).first()):
             return Response({"result":"No se encuentra esa subtematica"}
                             ,status=400,mimetype="application/json")
         
@@ -58,7 +58,7 @@ def modelo_controller_update(modelo):
         _modelo.nombre = _data["nombre"]
     if "id_subtematica" in _data:
         print(_data["id_subtematica"])
-        if not (sesion.query(Subtematica).filter_by(id_subtematica=_data["id_subtematica"]).first()):
+        if not (sesion.query(Subtematicas).filter_by(id_subtematica=_data["id_subtematica"]).first()):
             return Response(status=404,mimetype="application/json")
         _modelo.id_subtematica = _data["id_subtematica"]
     if "descripcion" in _data:

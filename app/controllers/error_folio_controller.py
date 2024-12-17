@@ -8,14 +8,14 @@ from ..src.impresion_conn import (
 from flask import Response
 
 from ..models.models import (
-    ErrorFolio
+    ErrorFolios
     )
 
 sesion = impresion_conn()
 
 
 def error_folio_controller_get_all():
-    return sesion.query(ErrorFolio).all()
+    return sesion.query(ErrorFolios).all()
 
 
 def error_folio_controller_register(error_folio):
@@ -38,7 +38,7 @@ def error_folio_controller_register(error_folio):
         _costo_reajustado = error_folio["costo_reajustado"]
     
   
-    mError_folio = ErrorFolio(
+    mError_folio = ErrorFolios(
         id_folio=_id_folio,
         id_modelo=_id_modelo,
         merma=_merma,
@@ -49,14 +49,14 @@ def error_folio_controller_register(error_folio):
     
     sesion.add(mError_folio)
     sesion.commit()
-    return sesion.query(ErrorFolio).filter_by(id_error=mError_folio.id_error).all()
+    return sesion.query(ErrorFolios).filter_by(id_error=mError_folio.id_error).all()
 
 
 
 def error_folio_controller_update(error_folio):
     _id = error_folio["id"]
     _data = error_folio
-    _error = sesion.query(ErrorFolio).filter_by(id_error=_id).first()
+    _error = sesion.query(ErrorFolios).filter_by(id_error=_id).first()
     
     if "id_folio" in _data:
         _error.id_folio = _data["id_folio"]
@@ -72,13 +72,13 @@ def error_folio_controller_update(error_folio):
     sesion.merge(_error)
     sesion.flush()
     sesion.commit()
-    return sesion.query(ErrorFolio).filter_by(id_error=_id).all()
+    return sesion.query(ErrorFolios).filter_by(id_error=_id).all()
     
     
 def error_folio_controller_delete_by_id(id):
     
     try:
-        _i=sesion.query(ErrorFolio).filter_by(id_error = id).first()
+        _i=sesion.query(ErrorFolios).filter_by(id_error = id).first()
         sesion.delete(_i)
         sesion.commit()
         
@@ -93,7 +93,6 @@ def error_folio_controller_delete_by_id(id):
 
 def error_folio_controller_get_by_filter(args):
     data = args
-    print(data)
     esperados = ["id_folio","id_modelo","merma","costo_reajustado"]
     _where = 'where '
     
@@ -107,7 +106,7 @@ def error_folio_controller_get_by_filter(args):
             _where += f'{esperados[i]} = "{data[esperados[i]]}"'
             
             
-    query = sesion.query(ErrorFolio).from_statement(text(f"SELECT * FROM error_folio {_where}")).all()
+    query = sesion.query(ErrorFolios).from_statement(text(f"SELECT * FROM error_folio {_where}")).all()
     if len(query) > 0:
         return query
     elif len(query) <= 0:
@@ -115,7 +114,7 @@ def error_folio_controller_get_by_filter(args):
 
 
 def error_folio_controller_get_by_id(id):
-    query = sesion.query(ErrorFolio).filter_by(id_error=id).all()
+    query = sesion.query(ErrorFolios).filter_by(id_error=id).all()
     if len(query) > 0:
         return query
     elif len(query) <= 0:
