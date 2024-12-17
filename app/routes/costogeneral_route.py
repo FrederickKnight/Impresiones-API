@@ -1,4 +1,5 @@
 from flask import Blueprint, request
+from datetime import datetime
 
 from ..controllers.costogeneral_controller import (
     costo_general_controller_get_all,
@@ -67,9 +68,11 @@ def __costo_general_for__(costogeneral):
     try:
         for cg in costogeneral:
             
+            fecha_date = datetime.strftime(cg.fecha,"%Y-%m-%d")
+            
             _return.append({
                 "id":cg.id_costo_general,
-                "fecha":cg.fecha,
+                "fecha":fecha_date,
                 "id_material":cg.id_material,
                 "desgaste":cg.desgaste,
                 "electricidad":cg.electricidad,

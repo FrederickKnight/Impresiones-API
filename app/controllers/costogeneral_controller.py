@@ -12,8 +12,6 @@ from ..models.models import (
     Materiales
     )
 
-from datetime import datetime
-
 
 sesion = impresion_conn()
 

@@ -8,7 +8,7 @@ from ..src.impresion_conn import (
     )
 
 from ..models.models import (
-    Subtematica
+    Subtematicas
     )
 
 
@@ -16,7 +16,7 @@ sesion = impresion_conn()
 
 
 def subtematica_controller_get_all():
-    return sesion.query(Subtematica).all()
+    return sesion.query(Subtematicas).all()
 
 
 def subtematica_controller_register(subtematica):
@@ -29,21 +29,21 @@ def subtematica_controller_register(subtematica):
     if "nombre" in subtematica:
         _nombre = subtematica["nombre"]
         
-    mSubtematica = Subtematica(
+    mSubtematica = Subtematicas(
         id_tematica=_id_tematica,
         nombre = _nombre,
     )
     
     sesion.add(mSubtematica)
     sesion.commit()
-    return sesion.query(Subtematica).filter_by(id_subtematica = mSubtematica.id_subtematica).all()
+    return sesion.query(Subtematicas).filter_by(id_subtematica = mSubtematica.id_subtematica).all()
     
 
 
 def subtematica_controller_update(subtematica):
     _id = subtematica["id"]
     _data = subtematica
-    _subtematica = sesion.query(Subtematica).filter_by(id_subtematica=_id).first()
+    _subtematica = sesion.query(Subtematicas).filter_by(id_subtematica=_id).first()
     
     
     if "id_tematica" in subtematica:
@@ -56,12 +56,12 @@ def subtematica_controller_update(subtematica):
     sesion.flush()
     sesion.commit()
     
-    return sesion.query(Subtematica).filter_by(id_subtematica = _id).all()
+    return sesion.query(Subtematicas).filter_by(id_subtematica = _id).all()
 
 
 def subtematica_controller_delete_by_id(id):
     try:
-        _sb=sesion.query(Subtematica).filter_by(id_subtematica = id).first()
+        _sb=sesion.query(Subtematicas).filter_by(id_subtematica = id).first()
         sesion.delete(_sb)
         sesion.commit()
         
@@ -73,7 +73,7 @@ def subtematica_controller_delete_by_id(id):
 
 
 def subtematica_controller_get_by_id(id):
-    query = sesion.query(Subtematica).filter_by(id_subtematica=id).all()
+    query = sesion.query(Subtematicas).filter_by(id_subtematica=id).all()
     if len(query) > 0:
         return query
     elif len(query) <= 0:
@@ -95,7 +95,7 @@ def subtematica_controller_get_by_filter(args):
             x += 1
             _where += f'{esperados[i]} = "{data[esperados[i]]}"'
     
-    query = sesion.query(Subtematica).from_statement(text(f"SELECT * FROM subtematica {_where}")).all()
+    query = sesion.query(Subtematicas).from_statement(text(f"SELECT * FROM subtematica {_where}")).all()
     if len(query) > 0:
         return query
     elif len(query) <= 0:
