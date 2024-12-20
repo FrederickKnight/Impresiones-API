@@ -18,25 +18,20 @@ def material_controller_get_all():
 
 
 def material_controller_register(material):
-    _nombre = None
-    _marca = None
-    _medicion = None
-    _color = None
+    _esperados = {
+        "nombre":None,
+        "marca":None,
+        "medicion":None,
+        "color":None
+    }
+    
+    _esperados.update({key:material[key] for key in _esperados if key in material})
   
-    if "nombre" in material:
-        _nombre = material["nombre"]
-    if "marca" in material:
-        _marca = material["marca"]
-    if "medicion" in material:
-        _medicion = material["medicion"]
-    if "color" in material:
-        _color = material["color"]
-        
     mMaterial = Materiales(
-        nombre=_nombre,
-        marca = _marca,
-        medicion = _medicion,
-        color = _color
+        nombre=_esperados["nombre"],
+        marca = _esperados["marca"],
+        medicion = _esperados["medicion"],
+        color = _esperados["color"]
     )
     
     sesion.add(mMaterial)
@@ -47,15 +42,20 @@ def material_controller_update(material):
     _id = material["id"]
     _data = material
     _material = sesion.query(Materiales).filter_by(id_material=_id).first()
+
+    _esperados = {
+        "nombre":None,
+        "marca":None,
+        "medicion":None,
+        "color":None
+    }
     
-    if "nombre" in _data:
-        _material.nombre = _data["nombre"]
-    if "marca" in _data:
-        _material.marca = _data["marca"]
-    if "medicion" in _data:
-        _material.medicion = _data["medicion"]
-    if "color" in material:
-        _material.color = material["color"]
+    _esperados.update({key:_data[key] for key in _esperados if key in _data})
+    
+    _material.nombre = _data["nombre"]
+    _material.marca = _data["marca"]
+    _material.medicion = _data["medicion"]
+    _material.color = _data["color"]
     
     sesion.merge(_material)
     sesion.flush()

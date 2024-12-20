@@ -19,32 +19,23 @@ def error_folio_controller_get_all():
 
 
 def error_folio_controller_register(error_folio):
-    _id_folio = None
-    _id_modelo = None
-    _merma = None
-    _descripcion = None
-    _costo_reajustado = None
     
+    _esperados = {
+        "id_folio":None,
+        "id_modelo":None,
+        "merma":None,
+        "descripcion":None,
+        "costo_reajustado":None
+    }
     
-    if "id_folio" in error_folio:
-        _id_folio = error_folio["id_folio"]
-    if "id_modelo" in error_folio:
-        _id_modelo = error_folio["id_modelo"]
-    if "merma" in error_folio:
-        _merma = error_folio["merma"]
-    if "descripcion" in error_folio:
-        _descripcion = error_folio["descripcion"]
-    if "costo_reajustado" in error_folio:
-        _costo_reajustado = error_folio["costo_reajustado"]
-    
+    _esperados.update({key:error_folio[key] for key in _esperados if key in error_folio})
   
     mError_folio = ErrorFolios(
-        id_folio=_id_folio,
-        id_modelo=_id_modelo,
-        merma=_merma,
-        descripcion=_descripcion,
-        costo_reajustado=_costo_reajustado
-        
+        id_folio=_esperados["id_folio"],
+        id_modelo=_esperados["id_modelo"],
+        merma=_esperados["merma"],
+        descripcion=_esperados["descripcion"],
+        costo_reajustado=_esperados["costo_reajustado"]
     )
     
     sesion.add(mError_folio)
@@ -58,16 +49,21 @@ def error_folio_controller_update(error_folio):
     _data = error_folio
     _error = sesion.query(ErrorFolios).filter_by(id_error=_id).first()
     
-    if "id_folio" in _data:
-        _error.id_folio = _data["id_folio"]
-    if "id_modelo" in _data:
-        _error.id_modelo = _data["id_modelo"]
-    if "merma" in _data:
-        _error.merma = _data["merma"]
-    if "descripcion" in _data:
-        _error.descripcion = _data["descripcion"]
-    if "costo_reajustado" in _data:
-        _error.costo_reajustado = _data["costo_reajustado"]
+    _esperados = {
+        "id_folio":None,
+        "id_modelo":None,
+        "merma":None,
+        "descripcion":None,
+        "costo_reajustado":None
+    }
+    
+    _esperados.update({key:_data[key] for key in _esperados if key in _data})
+    
+    _error.id_folio = _esperados["id_folio"]
+    _error.id_modelo = _esperados["id_modelo"]
+    _error.merma = _esperados["merma"]
+    _error.descripcion = _esperados["descripcion"]
+    _error.costo_reajustado = _esperados["costo_reajustado"]
     
     sesion.merge(_error)
     sesion.flush()

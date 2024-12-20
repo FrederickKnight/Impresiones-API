@@ -70,17 +70,7 @@ def __costo_general_for__(costogeneral):
             
             fecha_date = datetime.strftime(cg.fecha,"%Y-%m-%d")
             
-            _return.append({
-                "id":cg.id_costo_general,
-                "fecha":fecha_date,
-                "id_material":cg.id_material,
-                "desgaste":cg.desgaste,
-                "electricidad":cg.electricidad,
-                "riesgo_fallo_menor":cg.riesgo_fallo_menor,
-                "riesgo_fallo_mediano":cg.riesgo_fallo_mediano,
-                "riesgo_fallo_mayor":cg.riesgo_fallo_mayor,
-                "margen":cg.margen
-            })
+            _return.append(cg.get_dict())
             
         return _return
     except:

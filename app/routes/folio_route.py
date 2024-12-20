@@ -67,16 +67,7 @@ def __folio_for__(folio):
         
     try:
         for f in folio:
-            fecha_date = datetime.strftime(f.fecha,"%Y-%m-%d")
-            
-            _return.append({
-                "id":f.id_folio,
-                "folio":f.folio,
-                "id_cliente":f.id_cliente,
-                "id_costo_general":f.id_costo_general,
-                "fecha":fecha_date,
-                "concepto":f.concepto
-            })
+            _return.append(f.get_dict())
             
         return _return
     except:

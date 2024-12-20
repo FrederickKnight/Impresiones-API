@@ -18,22 +18,18 @@ def cliente_controller_get_all():
      
 
 def cliente_controller_register(cliente):
-    _nombre = None
-    _email = None
-    _numero = None
-
-  
-    if "nombre" in cliente:
-        _nombre = cliente["nombre"]
-    if "numero" in cliente:
-        _numero = cliente["numero"]
-    if "email" in cliente:
-        _email = cliente["email"]
+    _esperados = {
+        "nombre":None,
+        "email":None,
+        "numero":None
+    }
+    
+    _esperados.update({key:cliente[key] for key in _esperados if key in cliente})
   
     mCliente = Clientes(
-        nombre=_nombre,
-        numero=_numero,
-        email=_email
+        nombre=_esperados["nombre"],
+        email=_esperados["email"],
+        numero=_esperados["numero"],
     )
     sesion.add(mCliente)
     sesion.commit()
@@ -48,12 +44,17 @@ def cliente_controller_update(cliente):
     _data = cliente
     _cliente = sesion.query(Clientes).filter_by(id_cliente=_id).first()
     
-    if "nombre" in _data:
-        _cliente.nombre = _data["nombre"]
-    if "email" in _data:
-        _cliente.email = _data["email"]
-    if "numero" in _data:
-        _cliente.numero = _data["numero"]
+    _esperados = {
+        "nombre":None,
+        "email":None,
+        "numero":None
+    }
+    
+    _esperados.update({key:_data[key] for key in _esperados if key in _data})
+    
+    _cliente.nombre = _esperados["nombre"]
+    _cliente.email = _esperados["email"]
+    _cliente.numero = _esperados["numero"]
     
     
     sesion.merge(_cliente)
