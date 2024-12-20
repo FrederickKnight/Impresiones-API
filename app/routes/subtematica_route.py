@@ -64,11 +64,7 @@ def __subtematica_for__(subtematica):
     try:
         for sb in subtematica:
             
-            _return.append({
-                "id":sb.id_subtematica,
-                "id_tematica":sb.id_tematica,
-                "nombre":sb.nombre
-            })
+            _return.append(sb.get_dict())
             
         return _return
     except:

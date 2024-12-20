@@ -71,13 +71,7 @@ def __modelo__for(modelo):
     try:
         for ml in modelo:
             
-            _return.append({
-                "id":ml.id_modelo,
-                "nombre":ml.nombre,
-                "id_subtematica":ml.id_subtematica,
-                "descripcion":ml.descripcion,
-                "direccion_archivo":ml.direccion_archivo
-            })
+            _return.append(ml.get_dict())
             
         return _return
     except:

@@ -63,14 +63,7 @@ def __error_folio_for__(error_folio):
     try:
         for er in error_folio:
             
-            _return.append({
-                "id":er.id_error,
-                "id_folio":er.id_folio,
-                "id_modelo":er.id_modelo,
-                "merma":er.merma,
-                "descripcion":er.descripcion,
-                "costo_reajustado":er.costo_reajustado
-            })
+            _return.append(er.get_dict())
             
         return _return
     except:

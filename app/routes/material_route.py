@@ -76,14 +76,9 @@ def __material_for__(material):
     try:
         for ml in material:
             
-            _return.append({
-                "id":ml.id_material,
-                "nombre":ml.nombre,
-                "marca":ml.marca,
-                "color":ml.color,
-                "medicion":ml.medicion
-            })
-            
+
+            _return.append(ml.get_dict())
+                
         return _return
     except:
         return material

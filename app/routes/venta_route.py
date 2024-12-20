@@ -44,8 +44,7 @@ def venta_route_filter_id(id):
 
 @venta_bp.route("/filter",methods=["POST"])
 def cliente_route_filter():
-    #introducir args por medio de json en request
-    #Retornar el filtrado de la tabla venta, con cualquer arg
+    
     args = request.get_json()
     
     venta = venta_controller_get_by_filter(args)
@@ -62,18 +61,7 @@ def __venta_for__(venta):
     try:
         for v in venta:
             
-            _return.append({
-                "id":v.id_venta,
-                "id_folio":v.id_folio,
-                "id_modelo":v.id_modelo,
-                "id_material":v.id_material,
-                "cantidad_material":v.cantidad_material,
-                "tiempo_impresion":v.tiempo_impresion,
-                "costo_total":v.costo_total,
-                "descuento":v.descuento,
-                "costo_aplicado":v.costo_aplicado
-                
-            })
+            _return.append(v.get_dict())
             
         return _return
     except:

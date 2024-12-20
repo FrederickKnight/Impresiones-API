@@ -71,12 +71,7 @@ def __cliente_for__(clientes):
         
         for cl in clientes:
             
-            _return.append({
-                "id":cl.id_cliente,
-                "nombre":cl.nombre,
-                "email":cl.email,
-                "numero":cl.numero
-            })
+            _return.append(cl.get_dict())
             
         return _return
     except:

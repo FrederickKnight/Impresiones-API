@@ -58,10 +58,6 @@ def __inventario_for__(inventario):
     
     for iv in inventario:
         
-        _return.append({
-            "id":iv.id_inventario,
-            "id_material":iv.id_material,
-            "cantidad":iv.cantidad,
-        })
+        _return.append(iv.get_dict())
         
     return _return

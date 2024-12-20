@@ -13,11 +13,9 @@ from ..models.models import (
 
 sesion = impresion_conn()
 
-
 def inventario_controller_get_all():
     inventario = sesion.query(InventarioMaterial).all()
     return inventario
-
 
 def inventario_controller_register(inventario):
     _id_material = None
@@ -34,8 +32,7 @@ def inventario_controller_register(inventario):
   
     mInventario = InventarioMaterial(
         id_material=_id_material,
-        cantidad=_cantidad,
-        
+        cantidad=_cantidad,  
     )
     
     sesion.add(mInventario)
@@ -49,7 +46,6 @@ def inventario_controller_update(inventario):
     _inventario = sesion.query(InventarioMaterial).filter_by(id_inventario=_id).first()
     
     if "id_material" in _data:
-        print(_data["id_material"])
         if not (sesion.query(Materiales).filter_by(id_material=_data["id_material"]).first()):
             return Response({"result":"No se encuentra ese material"}
                             ,status=400,mimetype="application/json")

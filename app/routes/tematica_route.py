@@ -75,10 +75,7 @@ def __tematica_for__(tematica):
     try:
         for ml in tematica:
             
-            _return.append({    
-                "id":ml.id_tematica,
-                "nombre":ml.nombre
-            })
+            _return.append(ml.get_dict())
             
         return _return
     except:

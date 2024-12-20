@@ -17,44 +17,32 @@ sesion = impresion_conn()
 def venta_controller_get_all():
     return sesion.query(Ventas).all()
 
-
 def venta_controller_register(venta):
     
-    _id_folio = None
-    _id_modelo = None
-    _id_material = None
-    _cantidad_material = None
-    _tiempo_impresion = None
-    _costo_total = None
-    _descuento = None
-    _costo_aplicado = None
+    _esperados = {
+        "id_folio":None,
+        "id_modelo":None,
+        "id_material":None,
+        "cantidad_material":None,
+        "tiempo_impresion":None,
+        "costo_total":None,
+        "descuento":None,
+        "costo_aplicado":None,
+        "id_costo_general":None
+    }
     
-    if "id_folio" in venta:
-        _id_folio = venta["id_folio"]
-    if "id_modelo" in venta:
-        _id_modelo = venta["id_modelo"]
-    if "id_material" in venta:
-        _id_material = venta["id_material"]
-    if "cantidad_material" in venta:
-        _cantidad_material = venta["cantidad_material"]
-    if "tiempo_impresion" in venta:
-        _tiempo_impresion = venta["tiempo_impresion"]
-    if "costo_total" in venta:
-        _costo_total = venta["costo_total"]
-    if "descuento" in venta:
-        _descuento = venta["descuento"]
-    if "costo_aplicado" in venta:
-        _costo_aplicado = venta["costo_aplicado"]
-        
+    _esperados.update({key:venta[key] for key in _esperados if key in venta})
+    
     mVenta = Ventas(
-        id_folio=_id_folio,
-        id_modelo = _id_modelo,
-        id_material = _id_material,
-        cantidad_material = _cantidad_material,
-        tiempo_impresion = _tiempo_impresion,
-        costo_total = _costo_total,
-        descuento = _descuento,
-        costo_aplicado = _costo_aplicado,
+        id_folio=_esperados["id_folio"],
+        id_modelo = _esperados["id_modelo"],
+        id_material = _esperados["id_material"],
+        id_costo_general = _esperados["id_costo_general"],
+        cantidad_material = _esperados["cantidad_material"],
+        tiempo_impresion = _esperados["tiempo_impresion"],
+        costo_total = _esperados["costo_total"],
+        descuento = _esperados["descuento"],
+        costo_aplicado = _esperados["costo_aplicado"],
     )
     
     sesion.add(mVenta)
@@ -84,7 +72,7 @@ def venta_controller_get_by_id(id):
 def venta_controller_get_by_filter(args):
     data = args
     
-    esperados = ["id_folio","id_modelo","id_material","cantidad_material","tiempo_impresion","costo_total","descuento","costo_aplicado"]
+    esperados = ["id_folio","id_modelo","id_costo_general","id_material","cantidad_material","tiempo_impresion","costo_total","descuento","costo_aplicado"]
     _where = 'where '
     
     x= 0

@@ -11,8 +11,7 @@ from datetime import datetime
 
 from ..models.models import (
     Folios,
-    Clientes,
-    Costos_Generales
+    Clientes
     )
 
 from ..utils.folio_id_generador import FolioIdGenerador
@@ -27,34 +26,25 @@ def folio_controller_get_all():
 def folio_controller_register(folio):
     
     _folio = FolioIdGenerador().generate_ticket_id()
-    _id_cliente = None
-    _id_costo_general = None
-    _fecha = None
-    _concepto = None
+    
+    _esperados = {
+        "id_cliente":None,
+        "fecha":None,
+        "concepto":None
+    }
     
     if "id_cliente" in folio:
         if not (sesion.query(Clientes).filter_by(id_cliente=folio["id_cliente"]).first()):
             return Response({"result":"No se encuentra ese cliente"}
                             ,status=400,mimetype="application/json")
-        _id_cliente = folio["id_cliente"]
         
-    if "id_costo_general" in folio:
-        if not (sesion.query(Costos_Generales).filter_by(id_costo_general=folio["id_costo_general"]).first()):
-            return Response({"result":"No se encuentra ese costo general"}
-                            ,status=400,mimetype="application/json")
-        _id_costo_general = folio["id_costo_general"]
-        
-    if "fecha" in folio:
-        _fecha = folio["fecha"]
-    if "concepto" in folio:
-        _concepto = folio["concepto"]
+    _esperados.update({key:folio[key] for key in _esperados if key in folio})
         
     mFolio = Folios(
         folio=_folio,
-        id_cliente = _id_cliente,
-        id_costo_general = _id_costo_general,
-        fecha = datetime.strptime(_fecha, "%Y-%m-%d").date(),
-        concepto = _concepto
+        id_cliente = _esperados["id_cliente"],
+        fecha = datetime.strptime(_esperados["fecha"], "%Y-%m-%d").date(),
+        concepto = _esperados["concepto"]
     )
     
     sesion.add(mFolio)
